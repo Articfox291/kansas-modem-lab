@@ -1,0 +1,25 @@
+# never commit: images, dumps, captures, credentials, tool output
+*.img
+*.bin
+*.apk
+*.der
+*.xz
+*.elf
+*.ko
+*.o
+*captures/
+*capture/
+nvram*/
+modem_bak/
+stock_*/
+gsi/
+Temp/
+__pycache__/
+*.pyc
+subagent-artifacts/
+esim_lab/dummy_subscriber.json
+*.key
+*.pem
+*.p12
+*.pfx
+.env

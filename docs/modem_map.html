@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kansas — Board Floorplan: AP · Modem Coprocessor · Radio (2026-09-05)</title>
+<style>
+  :root { --bg:#0b0e12; --die:#141a24; --blk:#1b2331; --card:#10151d; --line:#2d3849; --txt:#d6dde6; --dim:#8b949e; --cu:#c9a227; }
+  body { background:var(--bg); color:var(--txt); font-family:Consolas,Menlo,monospace; margin:0; padding:20px; }
+  h1 { font-size:18px; margin:0 0 4px; } h2 { font-size:14px; margin:22px 0 8px; color:#fff; }
+  .sub { color:var(--dim); font-size:12px; margin-bottom:12px; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; margin:10px 0 4px; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  .g-have { background:#1f6f43; } .g-part { background:#8a6d1a; } .g-miss { background:#8a2323; } .g-prog { background:#1a5a8a; }
+  .board { display:grid; grid-template-columns:1.15fr 1.5fr 1fr; gap:12px; }
+  .die { background:var(--die); border:2px solid #46546a; border-radius:12px; padding:12px; }
+  .die > b.dt { display:block; font-size:13px; color:#fff; }
+  .die .dd { font-size:11px; color:var(--dim); margin:2px 0 10px; }
+  .blk { background:var(--blk); border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:10px; }
+  .blk > b.bt { display:block; font-size:12px; color:#fff; margin-bottom:6px; }
+  .sw { background:var(--card); border:1px solid var(--line); border-left:6px solid #555; border-radius:5px; padding:6px 8px; font-size:11px; margin-bottom:6px; }
+  .sw.have { border-left-color:#2ea043; } .sw.part { border-left-color:#c9a227; } .sw.miss { border-left-color:#c0392b; }
+  .sw b { display:block; font-size:11.5px; } .sw .n { color:var(--dim); }
+  .bus { border:1px dashed var(--cu); border-radius:8px; padding:8px 10px; font-size:11px; margin:0 0 12px; color:#e8c547; background:#151207; }
+  .bus b { color:#fff; }
+  .trace { font-size:11px; margin:3px 0; }
+  .walls { background:#1a1214; border:2px solid #6e2b2b; border-radius:10px; padding:12px; margin-top:6px; }
+  .wall { display:grid; grid-template-columns:110px 1fr; gap:10px; font-size:11.5px; padding:6px 0; border-bottom:1px solid #33222a; }
+  .wall:last-child { border-bottom:none; }
+  .tag { font-weight:bold; border-radius:4px; padding:2px 6px; text-align:center; height:fit-content; }
+  .t-down { background:#1f6f43; color:#bff0d4; } .t-stand { background:#8a2323; color:#ffd9d9; } .t-part { background:#8a6d1a; color:#ffedb5; }
+  table.miss { width:100%; border-collapse:collapse; font-size:11.5px; }
+  table.miss td, table.miss th { border:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top; }
+  table.miss th { background:#1a1f26; }
+  .foot { color:var(--dim); font-size:11px; margin-top:18px; }
+</style>
+</head>
+<body>
+<h1>Board floorplan — where every code runs, what flows between, what stops us</h1>
+<div class="sub">XT2513V (kansas) · MT6835 · PCORE nanoMIPS I7200 @0x90000000 · 135,488 CATI syms · ≈330 units listed (~0.24% bytes, ~90–95% unlock path) · 2026-09-05</div>
+<div class="legend">
+  <span><span class="dot g-have"></span>runs here · understood</span>
+  <span><span class="dot g-part"></span>runs here · partial</span>
+  <span><span class="dot g-miss"></span>blocked / opaque / hardware</span>
+  <span><span class="dot g-prog"></span>wave running</span>
+</div>
+
+<div class="board">
+<!-- ================= AP DIE ================= -->
+<div class="die"><b class="dt">DIE 1 · Application processor (normal system — WE OWN IT)</b><div class="dd">Cortex cluster + RAM + UFS · unlocked BL · KSU root · C: 2.5 GB free</div>
+  <div class="blk"><b class="bt">▣ CPU — rich OS</b>
+    <div class="sw have"><b>LineageOS 23.2 + KernelSU (init_boot)</b><span class="n">su shell · adbd-as-root dead (use su)</span></div>
+    <div class="sw have"><b>mtkfusionrild · atcid · ccci_rpcd · ccci_mdinit</b><span class="n">PIDs 1976/7136/1734/1733 · socket+SELinux census banked</span></div>
+    <div class="sw have"><b>tools/atci.py → adb_atci_socket</b><span class="n">raw Hayes AT · read-only · remain 5→5 re-proven</span></div>
+    <div class="sw have"><b>EasyEUICC / OpenEUICC (LPA)</b><span class="n">privileged channel · chaining proven correct</span></div>
+    <div class="sw part"><b>ccci_fsd daemon</b><span class="n">serves modem by filename · source + sanitizer UNPROVEN</span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ Kernel shims (built-in, no .ko)</b>
+    <div class="sw have"><b>ccci_dpmaif · ccci_ccif · ccci_md_all · ccci_util_lib</b><span class="n">modinfo: not found — strings via image/DT only</span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ External chips on this side</b>
+    <div class="sw have"><b>UFS flash: md1img sdc39/61 · protect sdc31/32 · nvram sdc5 · nvdata sdc7</b><span class="n">live hashes: slots differ · protect/nvdata drift daily · nvram/proinfo match</span></div>
+    <div class="sw have"><b>LPDDR (AP view of SMEM windows)</b><span class="n">root stages arbitrary bytes here → modem reads them</span></div>
+  </div>
+</div>
+<!-- ================= MODEM DIE ================= -->
+<div class="die"><b class="dt">DIE 2 · Modem coprocessor (THE TARGET)</b><div class="dd">PCORE I7200 + Coresonic DSP + modem SRAM · image 45.9 MB · vectors @0x90004000/100/180 · slot B stock</div>
+  <div class="blk"><b class="bt">▣ PCORE core — runs:</b>
+    <div class="sw have"><b>Boot + CERT chain</b><span class="n">GFH→SingleSig→RSA/PSS→CERT2 · sha 7ed179… · 8 new listings</span></div>
+    <div class="sw have"><b>SML verify/link + SMU dispatchers</b><span class="n">13-site polarity map · JALRC per-cat table · force-1 LIVE · <b>INJECTION PROVEN 2026-09-05: MTK2→MTKQ (ATI) + P248.TESTING (CGMR/prop/GUI) + force-1 + sl-force + 6×NOP cascade (smu_check_sml gauntlet E6BA/E6E2/E6E8/E6F0/E6F4/E6F8) on _a; EE 0, remain 5</b> · <b>SP-LOCK CLEARED LIVE: Sprint SIM NETWORK_LOCKED→LOADED, prompt gone, no codes entered</b></b></span></div>
+    <div class="sw have"><b>RMMI dispatch + validators + L4C map</b><span class="n">bound 0..442 · hash base-38 · EUULK listed-yet-undispatched</span></div>
+    <div class="sw have"><b>NVRAM stack + NVIO + HCK + RSU/op</b><span class="n">fail-closed parse · use-before-verify window · test-gate DENIES (no backdoor)</span></div>
+    <div class="sw have"><b>Assert/exception (20 listings)</b><span class="n">kal spin · lid BREAK 0x5 = live EE c:161 · ONE fail-open: SML read-error returns</span></div>
+    <div class="sw have"><b>Allocator/memcpy (23 listings)</b><span class="n">memcpy UNGUARDED · memset capped 0x7FFF · ADM 0x7FFF · no memmove</span></div>
+    <div class="sw part"><b>L1/RF/TX tables + BSI writers</b><span class="n">band-idx + freq-word in · tables selected · synth words out</span></div>
+    <div class="sw part"><b>RTOS core (14) + mailbox glue (12)</b><span class="n">mutex/queue/sleep · CSIF C2S/S2C + NL1 APIs</span></div>
+    <div class="sw part"><b>Emu engine (off-die model of this core)</b><span class="n">SWM/XS/INS diffs proposed-not-applied · <b>V1/V2 fork LIVE 2026-09-05: all 9 reach V1, real getItem bytes execute, die on NULL-table assert (BEQZC→BREAK, IDs 0x3432/0x2697) — ret1 retired; next: stage table word</b></span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ Modem SRAM — holds:</b>
+    <div class="sw part"><b>stack/ctx · SMEM rings · comp/gain/ramp tables</b><span class="n">0x25c9348c · 0x92479f54 · 0x24a9cd90 · 0x24xxxxxx staged-input surface</span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ DSP core (same die, different ISA — dark)</b>
+    <div class="sw miss"><b>EL1D / TxDFE / DPD firmware (Coresonic)</b><span class="n">closes TX loop · numerology lives here · no toolchain</span></div>
+  </div>
+</div>
+<!-- ================= RADIO ================= -->
+<div class="die"><b class="dt">DIE 3 · Radio hardware + secure elements</b><div class="dd">Soldered RF · no code here except tables burned at factory/calibration</div>
+  <div class="blk"><b class="bt">▣ RFIC transceiver</b>
+    <div class="sw part"><b>Synthesizer/PLL (BSI-driven)</b><span class="n">tune words in · lock range fixed · no honored lock-fail path</span></div>
+    <div class="sw miss"><b>TX gain application (DSP-closed)</b><span class="n">PCORE stages tables, DSP executes — unseen</span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ FEM → antenna</b>
+    <div class="sw miss"><b>PA + duplexer + filters (B8 UL 880–915)</b><span class="n">902–915 in-band · 915–928 roll-off · measure conducted</span></div>
+  </div>
+  <div class="blk"><b class="bt">▣ Secure elements (own chips)</b>
+    <div class="sw part"><b>eUICC / ISD-R</b><span class="n">prod-CI · M2 vs M4 TIED · needs test-eUICC + fresh matchingID</span></div>
+    <div class="sw part"><b>nano-SIM</b><span class="n">999-70 identity ready · A1 sim-proven · live event pending</span></div>
+  </div>
+</div>
+</div>
+
+<h2>Buses — what physically flows between the dice</h2>
+<div class="bus"><b>CCCI SMEM + CCIF doorbells</b> · AP↔PCORE: AT text (0003) · SIM-req ILMs (0xd2f/0x78) · 4508 status indications (MD→AP only) · 27 RPC req/rsp · ring idx/len (consumed pre-auth) · staged shared-memory bytes (root-writable → modem-parsed)</div>
+<div class="bus"><b>BSI/BPI serial (PCORE→RFIC)</b> · synth tune words · gain/ramp application commands · AFC corrections — one direction, no readback honored</div>
+<div class="bus"><b>MIPI RFFE / PA control (RFIC→FEM)</b> · band-select + bias + PA range — set at init/calibration, not per-packet</div>
+<div class="bus"><b>Mailbox C2S/S2C (PCORE↔DSP)</b> · mail structs via shared SRAM — PCORE side listed, DSP side dark</div>
+<div class="bus"><b>UFS (AP↔flash) · OMAPI (AP↔eUICC) · SIM I/O (modem↔SIM)</b> · images/blobs/profiles at rest and in transit</div>
+
+<h2>Traces — each code's path through the hardware (numbers = V-flows)</h2>
+<div class="sub">
+<div class="trace">① BOOT: flash md1img → PCORE CERT2 verify → SML-blob sign check → servants start (all green, sha-pinned)</div>
+<div class="trace">② SIM LINK: SIM → PCORE legal→s7→link → SMU JACLR table → personalization gates → 4508 indication → CCCI → AP props (green to force-1; live event pending)</div>
+<div class="trace">③ NVRAM: flash protect → PCORE LID parse → ext stub → cache → (HW decrypt: dark) → memcmp → consume; error branch returns w/o forcing lock (ONE fail-open)</div>
+<div class="trace">④ NCK: AP text → RMMI → SMU check → retry counter in protect (never spent live; HW-bound oracle)</div>
+<div class="trace">⑤ AT-READ: AP socket → CCCI 0003 → analyzer→JRC→validators → backend → reply (zero RPC, modem-local)</div>
+<div class="trace">⑥ AT-SET: AP text → guard TRIP on AP side (never reaches silicon)</div>
+<div class="trace">⑦ eSIM: AP OMAPI → eUICC ISD-R → first-fragment gate (M2/M4 tie) → 6A80, no PIR (dies before policy)</div>
+<div class="trace">⑧ TX REQUEST: PCORE tables → BSI words → RFIC synth (lock?) → DSP apply (dark) → FEM (filters) → antenna (never operationalized)</div>
+<div class="trace">⑨ RPCD: PCORE req → CCCI → AP shapes blob → PCORE parses (unlisted) → consume; lock path provably absent</div>
+<div class="trace">⑩ FSD: PCORE filename → AP daemon serves → PCORE mcf consumes (consumer VAs banked, listings next)</div>
+</div>
+
+<h2>What is stopping actual code execution on the coprocessor</h2>
+<div class="sub">Headline first: <b>execution itself is NOT blocked</b> — signed arbitrary patches boot clean today (force-1 is running on slot A right now). What stands in the way is <i>useful, verified-before-flash, goal-directed</i> execution. Wall by wall:</div>
+<div class="walls">
+  <div class="wall"><span class="tag t-down">BREACHED</span><span><b>Image signing (CERT2).</b> Hash-override re-sign + fastboot flash accepted, byte-identical reproducibility (sha 7ed179…). The modem runs our bytes. This wall fell first and stays down as long as slot-B-stock + backup discipline holds.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>Secure-boot anchors below the modem.</b> BootROM (eFuse PKI) → preloader (no CERT2 container — re-sign refused by design) → LK (separate unlock-serial flow). We can sign modem code, not rewrite the chain of trust. A bad preloader/LK flash = unrecoverable brick; those regions are permanently off-limits.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>Fail-closed silicon behavior.</b> Bad NVRAM → <i>lid_error_handle.c:161 → BREAK → MD exception → WDT reset loop</i> (proven live, twice observed). Bad code → same exception path. The modem does not limp past corruption — every untested payload risks an exception loop recoverable only by reflash. This is the tax on each live experiment.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>No full-system rehearsal.</b> Nothing boots the modem off-device: no MMU/TLB model, no Nucleus scheduling, no DSP, no RF, no interrupts-as-hardware. Carved-function proofs (25-step stock, 1-step patch) validate <i>instructions</i>, never <i>consequences</i>. Every flash is therefore a first live run — the gap between "executes" and "behaves" can only be closed on silicon, one risky cycle at a time.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>Hardware-bound secrets.</b> SML plaintext, NCK material, HCK keys, eFuse/OTP, RPMB, TEE (MobiCore/Trusty) — decryption happens behind silicon the PCORE code calls into but never sees. Even with arbitrary code execution, secrets come out as oracle answers (yes/no), never bytes. Exfiltration is architecturally impossible, not merely unattempted.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>Attempt counters + irreversible latches.</b> remain 5 (floor), retry 5→0→sticky HARD_LOCKED, DISABLE_PERMANENT latch. These live in protect/NVRAM the modem itself guards; brute force is mathematically closed and each probe is priced. Our NCK work is RAM-only forever.</span></div>
+  <div class="wall"><span class="tag t-part">PARTIAL</span><span><b>In-firmware validators + dispatch bounds.</b> Analyzer 0..442, BGEIUC/ANDI gates, validator caps, guard fixtures — all hold under faithful models, which is exactly why H1 needs a 3-conjunct bypass and H2 needs a second bug. They don't stop <i>our signed patches</i>, but they stop every <i>input-driven</i> path (AT text, ring bytes, staged SMEM) from reaching a write primitive — proven DoS-only for JRC, OPEN-but-narrow for op12.</span></div>
+  <div class="wall"><span class="tag t-part">PARTIAL</span><span><b>Analysis darkness around the payload.</b> JALRC real targets unrecoverable in isolation (need live RAM), esmlck/verify run on synthetic ret1, SWM/XS/INS fixes unapplied, EARFCN path + modem RPC/FSD consumers unlisted. We can execute anywhere and understand ~90% of the <i>lock path</i> — but a payload touching unknown callees flies blind past its BALC. Each wave shrinks this; it is the only wall that yields to decomp.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>DSP + RF physics.</b> Different ISA with no toolchain, closed-loop gain the PCORE can't observe, synth lock ranges, duplexer roll-off above 915 MHz. No patch makes a filter pass what it rejects. Code execution ends at the PCORE pins; radiation obeys hardware.</span></div>
+  <div class="wall"><span class="tag t-stand">STANDING</span><span><b>Procedure, not silicon: slot discipline + backups + floors.</b> Slot B stock, protect/nvram backups, remain-5 floor, no-reboot/no-write rules for reads, dry-run-only flash planning. These stop <i>us from bricking ourselves</i> — the only adversary that has ever damaged this modem (protect-erase incident) was us.</span></div>
+</div>
+
+<h2>Net assessment</h2>
+<table class="miss"><tr><th>Question</th><th>Answer</th></tr>
+<tr><td>Can we execute code on the coprocessor?</td><td><b>Yes — today.</b> Signed patches boot clean; force-1 proves control flow hijack at will.</td></tr>
+<tr><td>Can we execute the <i>right</i> code first-try?</td><td><b>Not reliably.</b> No full-system rehearsal + analysis darkness ⇒ each novel payload is a live experiment priced in flash cycles and exception-loop risk.</td></tr>
+<tr><td>Can code exec read protected data?</td><td><b>No.</b> HW-bound crypto answers yes/no; bytes never surface. Architectural, permanent.</td></tr>
+<tr><td>Can code exec unlock test values / test SIMs?</td><td><b>Already does (force-1) pending live SIM confirmation;</b> A1 allowlist-append is the cleaner persistent form, sim-proven.</td></tr>
+<tr><td>Can code exec reach the antenna at 915 MHz?</td><td><b>Request: yes (tables+BSI). Radiate usefully: hardware decides</b> — synth lock, roll-off, DSP loop all stand past the pins.</td></tr>
+</table>
+<div class="foot">Floorplan view: code lives inside the die that runs it; buses show matter crossing; walls show what stops OUR execution specifically. Prior graph view superseded. Keep red honest.</div>
+</body>
+</html>

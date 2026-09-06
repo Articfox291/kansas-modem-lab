@@ -1,0 +1,12 @@
+{
+  "_comment": "TEMPLATE ONLY — never commit real credentials. Generate your own test subscriber values and keep the real file local (git-ignored). Example: openssl rand -hex 16 (twice, for k and opc). Test PLMN ranges (e.g. MCC 999 for private use, or 001/01) and a test-cert eUICC / programmable SIM complete the lab loop.",
+  "imsi": "999700000000001",
+  "plmn": "99970",
+  "iccid": "8999997000000001",
+  "k": "00112233445566778899AABBCCDDEEFF",
+  "opc": "FFEEDDCCBBAA99887766554433221100",
+  "amf": "8000",
+  "sqn": 0,
+  "slice": "default",
+  "apn": "internet"
+}
